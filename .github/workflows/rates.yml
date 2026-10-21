@@ -34,6 +34,9 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    outputs:
+      # Indica si hubo commit, para encadenar el deploy solo cuando toca.
+      pushed: ${{ steps.publish.outputs.pushed }}
     steps:
       - uses: actions/checkout@v7
 
@@ -70,9 +73,12 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publicar cambios
+        id: publish
         if: steps.fetch.outcome == 'success'
         shell: bash
         run: |
+          echo "pushed=false" >> "$GITHUB_OUTPUT"
+
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/data/rates.json public/data/history.json
@@ -95,6 +101,7 @@ jobs:
           for attempt in 1 2 3; do
             if git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push; then
               echo "Publicado."
+              echo "pushed=true" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             echo "Push falló (intento $attempt de 3)."
@@ -173,3 +180,15 @@ jobs:
       - name: Fallar si no se publicó nada
         if: steps.fetch.outcome != 'success'
         run: exit 1
+
+  # Sin este encadenado la tasa nueva llegaría al repositorio pero nunca al
+  # sitio: GitHub no dispara workflows a partir de un push del GITHUB_TOKEN.
+  # Solo corre si hubo commit, para no redesplegar cuando la tasa no cambió.
+  deploy:
+    needs: update
+    if: needs.update.outputs.pushed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy.yml

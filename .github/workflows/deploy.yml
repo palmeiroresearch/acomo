@@ -10,6 +10,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Lo invoca `rates.yml` después de publicar tasas nuevas. Es obligatorio:
+  # GitHub NO dispara workflows a partir de un push hecho con el GITHUB_TOKEN
+  # —una salvaguarda contra bucles recursivos— así que el commit del bot jamás
+  # provocaría un deploy por sí solo y la web se quedaría con datos viejos
+  # indefinidamente, aunque el repo estuviera al día.
+  workflow_call:
 
 permissions:
   contents: read
