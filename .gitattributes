@@ -1,0 +1,18 @@
+# Normaliza los finales de línea a LF en el repositorio.
+* text=auto eol=lf
+
+# Scripts que se ejecutan en Linux (runners de CI) o como shell script: si se
+# les cuelan CRLF, fallan con un «bad interpreter» difícil de diagnosticar.
+*.sh        text eol=lf
+gradlew     text eol=lf
+*.yml       text eol=lf
+
+# Ficheros de Windows que sí quieren CRLF.
+*.bat       text eol=crlf
+gradlew.bat text eol=crlf
+
+# Binarios: nunca tocar.
+*.png       binary
+*.jar       binary
+*.keystore  binary
+*.zip       binary
