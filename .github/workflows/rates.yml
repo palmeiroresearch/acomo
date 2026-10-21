@@ -1,13 +1,13 @@
 name: Tasas
 
-# Actualiza public/data/rates.json desde las fuentes externas.
+# Actualiza public/data/rates.json desde cubadivisas y el API del BCC.
 #
-# Correcciones respecto al workflow original, que llevaba meses fallando sin
-# que nadie se enterara:
+# Correcciones respecto al workflow original, que llevaba meses fallando sin que
+# nadie se enterara:
 #   - `concurrency` para que dos corridas no se pisen al hacer push.
 #   - `git pull --rebase` antes del push (antes fallaba si entraba otro commit).
-#   - Abre un issue cuando la cadena falla, y lo cierra al recuperarse. Esto es
-#     lo que faltaba: antes el único rastro era un check rojo que nadie miraba.
+#   - Abre un issue cuando la cadena falla y lo cierra al recuperarse. Antes el
+#     único rastro era un check rojo que nadie miraba.
 #   - Sin `[skip ci]` en el commit: el deploy TIENE que correr para que la tasa
 #     nueva llegue a Pages.
 #
@@ -17,15 +17,11 @@ name: Tasas
 
 on:
   schedule:
-    # Cada 2 h de 06:00 a 22:00 hora de Cuba (UTC-4). De madrugada el mercado
-    # informal no se mueve, así que no se gastan corridas.
-    - cron: '0 10,12,14,16,18,20,22,0,2 * * *'
+    # Cada 30 minutos, que es el ritmo al que se refresca la fuente. Correrlo
+    # también de madrugada sale casi gratis: si la tasa no cambió no hay commit,
+    # y sin commit no hay deploy.
+    - cron: '*/30 * * * *'
   workflow_dispatch:
-    inputs:
-      try_eltoque_browser:
-        description: 'Intentar saltar Cloudflare en eltoque.com con Chromium (lento, ~500 MB)'
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -39,9 +35,9 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
           cache: pip
@@ -49,12 +45,6 @@ jobs:
 
       - name: Instalar dependencias
         run: pip install -r scripts/requirements.txt
-
-      - name: Instalar Chromium para el intento con elToque
-        if: inputs.try_eltoque_browser
-        run: |
-          pip install -r scripts/requirements-browser.txt
-          playwright install --with-deps chromium
 
       - name: Obtener tasas
         id: fetch
@@ -65,27 +55,23 @@ jobs:
         # daría por bueno, que es exactamente el fallo silencioso que este
         # rebuild existe para eliminar.
         shell: bash
-        env:
-          # Vacío hasta que elToque entregue una API key. En cuanto exista el
-          # secret, `eltoque_api` pasa a ser la fuente activa sin tocar código.
-          ELTOQUE_API_KEY: ${{ secrets.ELTOQUE_API_KEY }}
-        run: |
-          python -m scripts.rates.main \
-            ${{ inputs.try_eltoque_browser && ' ' || '--no-browser' }} \
-            | tee rates-run.log
+        run: python -m scripts.rates.main | tee rates-run.log
 
       - name: Resumen
+        if: always()
+        shell: bash
         run: |
           {
             echo "### Tasas"
             echo
             echo '```'
-            cat rates-run.log || echo "(sin salida)"
+            cat rates-run.log 2>/dev/null || echo "(sin salida)"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publicar cambios
         if: steps.fetch.outcome == 'success'
+        shell: bash
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -96,10 +82,9 @@ jobs:
             exit 0
           fi
 
-          SRC="${{ steps.fetch.outputs.informal_source }}"
-          git commit -m "tasas: actualizar desde ${SRC:-fuentes}"
+          git commit -m "tasas: actualizar desde ${{ steps.fetch.outputs.informal_source || 'cubadivisas' }}"
 
-          # Reintento con rebase: otra corrida o un push manual pueden haber
+          # Reintento con rebase: con una corrida cada 30 min, otra puede haber
           # adelantado la rama entre el checkout y este punto.
           for attempt in 1 2 3; do
             git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push && exit 0
@@ -110,16 +95,20 @@ jobs:
 
       - name: Avisar por issue si la cadena falló
         if: steps.fetch.outcome != 'success'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
-            const title = 'Pipeline de tasas: todas las fuentes fallaron';
-            const log = require('fs').existsSync('rates-run.log')
-              ? require('fs').readFileSync('rates-run.log', 'utf8').slice(-3000)
+            const fs = require('fs');
+            const title = 'Pipeline de tasas: la fuente no responde';
+            const log = fs.existsSync('rates-run.log')
+              ? fs.readFileSync('rates-run.log', 'utf8').slice(-3000)
               : '(sin log)';
             const body = [
-              'La cadena de proveedores no devolvió ningún dato válido y no había',
-              'valor previo que arrastrar, así que **no se publicó nada**.',
+              'El pipeline no obtuvo datos válidos y no había valor previo que',
+              'arrastrar, así que **no se publicó nada**.',
+              '',
+              'Lo más probable: cubadivisas cambió el formato de su página. Los',
+              'tests de `scripts/rates/tests` lo confirmarán.',
               '',
               `Corrida: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
               '',
@@ -145,17 +134,17 @@ jobs:
 
       - name: Cerrar el issue al recuperarse
         if: steps.fetch.outcome == 'success'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
-            const title = 'Pipeline de tasas: todas las fuentes fallaron';
+            const title = 'Pipeline de tasas: la fuente no responde';
             const { data: open } = await github.rest.issues.listForRepo({
               ...context.repo, state: 'open', labels: 'tasas',
             });
             for (const issue of open.filter(i => i.title === title)) {
               await github.rest.issues.createComment({
                 ...context.repo, issue_number: issue.number,
-                body: `Recuperado: la fuente \`${{ steps.fetch.outputs.informal_source }}\` volvió a responder.`,
+                body: 'Recuperado: la fuente volvió a responder.',
               });
               await github.rest.issues.update({
                 ...context.repo, issue_number: issue.number, state: 'closed',
@@ -166,7 +155,7 @@ jobs:
         if: steps.fetch.outputs.carried != ''
         run: |
           echo "::warning::Se arrastró el dato anterior de: ${{ steps.fetch.outputs.carried }}. \
-          La app lo mostrará con su antigüedad real, pero conviene revisar las fuentes."
+          La app lo mostrará con su antigüedad real, pero conviene revisar la fuente."
 
       - name: Fallar si no se publicó nada
         if: steps.fetch.outcome != 'success'
