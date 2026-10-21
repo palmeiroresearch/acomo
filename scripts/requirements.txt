@@ -3,7 +3,3 @@ requests>=2.32,<3
 
 # Solo para los tests de los parsers.
 pytest>=8.0,<9
-
-# Playwright va aparte, en requirements-browser.txt: pesa ~500 MB con Chromium
-# y solo lo necesita el proveedor experimental `eltoque_browser`. Sin él, ese
-# proveedor se salta con reason='playwright_missing' y la cadena continúa.

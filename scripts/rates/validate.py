@@ -7,11 +7,13 @@ absurdo», así que un fallo silencioso era indistinguible del éxito.
 Dos niveles:
 
 - Rangos por moneda: atrapa el error de parseo más probable, que es coger el
-  campo equivocado. En directoriocubano, por ejemplo, cada moneda trae su cruce
-  contra MLC y USD además de CUP; leer el equivocado daría 1.49 en lugar de 815,
-  un número que pasa cualquier chequeo de «es un número positivo».
+  campo equivocado. Cada objeto de cubadivisas trae `median`, `value`, `change`
+  y `change_pct` juntos; leer `change` en lugar de `median` daría 5.0 en vez de
+  820, un número que pasa cualquier chequeo de «es un número positivo».
 - Validación cruzada: dos fuentes independientes que difieren mucho en la misma
   moneda indican que al menos una está mal, aunque ambas estén dentro de rango.
+  Hoy hay una sola fuente, así que no dispara; se mantiene porque en cuanto
+  aparezca una segunda vuelve a tener sentido sin tocar nada.
 """
 
 from __future__ import annotations

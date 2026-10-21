@@ -19,7 +19,6 @@ Invariantes, en orden de importancia:
 Uso:
     python -m scripts.rates.main --dry-run
     python -m scripts.rates.main --provider cubadivisas
-    python -m scripts.rates.main --no-browser
 """
 
 from __future__ import annotations
@@ -34,7 +33,7 @@ import sys
 import requests
 
 from . import bcc, validate
-from .providers import BY_NAME, CHAIN, COMPLEMENTS, ProviderResult, Rate
+from .providers import BY_NAME, CHAIN, ProviderResult
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RATES_PATH = ROOT / "public" / "data" / "rates.json"
@@ -89,43 +88,21 @@ def _write_json(path: pathlib.Path, payload: dict) -> None:
     tmp.replace(path)
 
 
-def collect_complements(session, winner_name: str, log: list[str]) -> dict[str, Rate]:
-    """Monedas que el ganador no cubre, tomadas de fuentes complementarias.
-
-    Hoy esto existe por una razón concreta: cubadivisas no publica MXN y
-    directoriocubano sí. Solo rellena huecos; nunca sobreescribe al ganador.
-    """
-    extra: dict[str, Rate] = {}
-
-    for module in COMPLEMENTS:
-        if module.NAME == winner_name:
-            continue
-        result = module.fetch(session)
-        if not result.ok:
-            log.append(f"  complemento {module.NAME}: {result.reason}")
-            continue
-        clean, _ = validate.filter_in_range(result.rates)
-        for code, rate in clean.items():
-            extra.setdefault(code, rate)
-
-    return extra
-
-
-def build_informal(session, only: str | None, skip_browser: bool, log: list[str]) -> dict | None:
+def build_informal(session, only: str | None, log: list[str]) -> dict | None:
     if only:
         module = BY_NAME.get(only)
         if module is None:
             print(f"ERROR: proveedor desconocido '{only}'. Opciones: {', '.join(BY_NAME)}")
             sys.exit(2)
-        modules = (module,)
+        modules: tuple = (module,)
     else:
-        modules = tuple(m for m in CHAIN if not (skip_browser and m.NAME == "eltoque_browser"))
+        modules = CHAIN
 
     attempted: list[str] = []
     print("Mercado informal:")
 
     winner: ProviderResult | None = None
-    seconds: list[dict[str, Rate]] = []
+    seconds: list[dict] = []
 
     for module in modules:
         result = module.fetch(session)
@@ -154,13 +131,8 @@ def build_informal(session, only: str | None, skip_browser: bool, log: list[str]
 
     rates = dict(winner.rates)
 
-    extra = collect_complements(session, winner.name, log)
-    filled = [code for code in extra if code not in rates]
-    for code in filled:
-        rates[code] = extra[code]
-    if filled:
-        print(f"  complemento      +  {', '.join(sorted(filled))}")
-
+    # Con un solo proveedor esto no dispara nunca, pero se mantiene: en cuanto
+    # haya una segunda fuente vuelve a tener sentido sin tocar nada.
     disputed = validate.cross_check(winner.rates, seconds)
     if disputed:
         print(f"  ! discrepancia >5% entre fuentes: {', '.join(disputed)}")
@@ -173,8 +145,6 @@ def build_informal(session, only: str | None, skip_browser: bool, log: list[str]
         "attempted": attempted,
         "rates": {code: rate.to_json() for code, rate in sorted(rates.items())},
     }
-    if filled:
-        block["complemented"] = sorted(filled)
     if disputed:
         block["disputed"] = sorted(disputed)
     return block
@@ -184,8 +154,6 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Actualiza las tasas de A Cómo")
     parser.add_argument("--dry-run", action="store_true", help="resuelve e imprime sin escribir")
     parser.add_argument("--provider", help="usa solo este proveedor informal")
-    parser.add_argument("--no-browser", action="store_true",
-                        help="omite el intento con Playwright (más rápido en local)")
     parser.add_argument("--no-history", action="store_true", help="no actualiza history.json")
     args = parser.parse_args()
 
@@ -193,7 +161,7 @@ def main() -> int:
     session = requests.Session()
     previous = _read_json(RATES_PATH)
 
-    informal = build_informal(session, args.provider, args.no_browser, log)
+    informal = build_informal(session, args.provider, log)
 
     print("\nOficial (BCC, Segmento III):")
     official_raw = bcc.fetch_active(session)

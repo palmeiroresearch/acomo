@@ -11,8 +11,8 @@
         "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.sw.json",
         "test": "vitest run",
         "test:watch": "vitest",
-        "rates": "python -m scripts.rates.main --no-browser",
-        "rates:dry": "python -m scripts.rates.main --dry-run --no-browser",
+        "rates": "python -m scripts.rates.main",
+        "rates:dry": "python -m scripts.rates.main --dry-run",
         "ota:release": "node scripts/ota-release.mjs"
     },
     "devDependencies": {

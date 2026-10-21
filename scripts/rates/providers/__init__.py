@@ -1,27 +1,34 @@
-"""Registro de proveedores del mercado informal, en orden de preferencia.
+"""Proveedores de tasas del mercado informal.
 
-El orden es la política de la cadena: gana el primero que devuelve datos
-válidos. Está puesto de «dato de primera mano» a «agregador»:
+Hoy hay uno solo: **cubadivisas**. Es una decisión tomada con datos, no por
+simplificar a ciegas.
 
-1. eltoque_api       — la fuente ideal; inactiva hasta que llegue la API key.
-2. eltoque_browser   — intento experimental de saltar Cloudflare con Chromium.
-3. cubadivisas       — la fuente efectiva hoy; usa el esquema de elToque.
-4. directoriocubano  — respaldo, y única con MXN (ver COMPLEMENTS).
+La cadena original tenía cuatro. Una corrida real en GitHub Actions demostró que
+las otras tres no sirven desde un runner:
+
+- `eltoque_api` exige una API key que elToque no entrega.
+- `eltoque_browser` (Chromium contra el reto de Cloudflare) nunca llegó a pasar.
+- `directoriocubano` respondía bien desde una IP residencial, pero desde el
+  datacenter de GitHub devuelve el reto de Cloudflare igual que eltoque.com.
+
+Esa última fue la lección: **probar una fuente desde una máquina doméstica no
+dice nada sobre si funcionará en CI.** La única prueba válida es la corrida real.
+Mantener tres proveedores que siempre fallan solo añadía ruido al registro de
+intentos y daba una falsa sensación de respaldo.
+
+Si hace falta añadir una fuente, basta un módulo nuevo aquí con una función
+`fetch(session) -> ProviderResult` y añadirlo a `CHAIN`. El resto del pipeline
+no cambia.
 """
 
 from __future__ import annotations
 
-from . import cubadivisas, directoriocubano, eltoque_api, eltoque_browser
+from . import cubadivisas
 from .base import CANONICAL, ProviderResult, Rate
 
-CHAIN = (eltoque_api, eltoque_browser, cubadivisas, directoriocubano)
-
-# Proveedores que se consultan SIEMPRE, incluso si otro ya ganó, porque aportan
-# monedas que el ganador no cubre. Sus tasas solo rellenan huecos, nunca
-# sobreescriben las del ganador: mezclar fuentes en la misma moneda daría una
-# tabla incoherente.
-COMPLEMENTS = (directoriocubano,)
+#: Proveedores en orden de preferencia; gana el primero con datos válidos.
+CHAIN = (cubadivisas,)
 
 BY_NAME = {module.NAME: module for module in CHAIN}
 
-__all__ = ["CHAIN", "COMPLEMENTS", "BY_NAME", "CANONICAL", "ProviderResult", "Rate"]
+__all__ = ["CHAIN", "BY_NAME", "CANONICAL", "ProviderResult", "Rate"]

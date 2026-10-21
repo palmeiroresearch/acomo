@@ -32,6 +32,22 @@ const REFRESH_LABEL: Record<Freshness, string> = {
     stale: 'Datos desactualizados',
 };
 
+/** Cada cuánto se repinta el texto «hace X min». No toca la red. */
+const AGE_TICK_MS = 60_000;
+
+/**
+ * Cada cuánto se buscan tasas nuevas con la pantalla abierta.
+ *
+ * El pipeline publica cada 30 min, así que con 5 min de sondeo el desfase
+ * máximo es pequeño. El coste en datos es casi nulo: la petición lleva
+ * `cache: 'no-cache'`, de modo que si el fichero no cambió el servidor responde
+ * 304 sin cuerpo. Eso importa con tarifas de datos caras.
+ */
+const AUTO_REFRESH_MS = 5 * 60_000;
+
+/** Suelo entre peticiones, para no machacar al alternar entre apps. */
+const MIN_FETCH_GAP_MS = 60_000;
+
 /**
  * Normaliza un importe tecleado.
  *
@@ -69,6 +85,7 @@ export interface RatesScreen {
 export function createRatesScreen(panel: HTMLElement): RatesScreen {
     let document_: RatesDocument | null = cachedRates();
     let refreshing = false;
+    let lastFetch = 0;
     let ticker: number | undefined;
 
     const converter: ConverterState = {
@@ -89,7 +106,7 @@ export function createRatesScreen(panel: HTMLElement): RatesScreen {
         type: 'button',
         'aria-label': 'Actualizar tasas',
     }, [icon(ICONS.refresh, 18, 2.2)]);
-    refreshButton.addEventListener('click', () => void refresh(true));
+    refreshButton.addEventListener('click', () => void refresh('manual'));
 
     const header = el('header', { class: 'app-header' }, [
         el('button', {
@@ -346,7 +363,7 @@ export function createRatesScreen(panel: HTMLElement): RatesScreen {
                 ]),
                 (() => {
                     const retry = el('button', { class: 'btn-primary', type: 'button' }, ['Reintentar']);
-                    retry.addEventListener('click', () => void refresh(true));
+                    retry.addEventListener('click', () => void refresh('manual'));
                     return retry;
                 })(),
             ]),
@@ -393,12 +410,25 @@ export function createRatesScreen(panel: HTMLElement): RatesScreen {
         return blockFor(converter.market)?.rates ?? {};
     }
 
-    async function refresh(manual: boolean): Promise<void> {
+    /**
+     * Busca tasas nuevas.
+     *
+     * `manual` lo pide el usuario con el botón y siempre va a la red. `auto` es
+     * oportunista: se salta si acaba de haber una petición o si no hay conexión,
+     * para no gastar datos en balde.
+     */
+    async function refresh(mode: 'manual' | 'auto'): Promise<void> {
         if (refreshing) return;
+        if (mode === 'auto') {
+            if (!navigator.onLine) return;
+            if (Date.now() - lastFetch < MIN_FETCH_GAP_MS) return;
+        }
+
         refreshing = true;
+        lastFetch = Date.now();
         refreshButton.classList.add('is-spinning');
 
-        if (manual && !document_) renderSkeleton();
+        if (!document_) renderSkeleton();
 
         const { document: fresh } = await fetchRates();
         if (fresh) document_ = fresh;
@@ -410,8 +440,10 @@ export function createRatesScreen(panel: HTMLElement): RatesScreen {
 
     function startTicker(): void {
         stopTicker();
-        // Solo refresca el texto «hace X min», no la red.
-        ticker = window.setInterval(renderStatus, 60_000);
+        ticker = window.setInterval(() => {
+            renderStatus();
+            if (Date.now() - lastFetch >= AUTO_REFRESH_MS) void refresh('auto');
+        }, AGE_TICK_MS);
     }
 
     function stopTicker(): void {
@@ -421,13 +453,27 @@ export function createRatesScreen(panel: HTMLElement): RatesScreen {
         }
     }
 
+    // Dos momentos en los que el dato casi siempre está viejo y el usuario
+    // espera verlo fresco sin pedir nada:
+    //
+    //  - Volver a la app desde segundo plano. En móvil es EL caso: la app vive
+    //    minutos u horas suspendida y al reabrirla mostraba lo de antes.
+    //  - Recuperar la conexión. Si falló por estar sin cobertura, reintentar en
+    //    cuanto vuelve es justo lo que hace falta.
+    //
+    // Se registran una sola vez, en la creación de la pantalla.
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') void refresh('auto');
+    });
+    window.addEventListener('online', () => void refresh('auto'));
+
     render();
     if (!document_) renderSkeleton();
 
     return {
         enter: () => {
             startTicker();
-            void refresh(false);
+            void refresh('auto');
         },
         leave: stopTicker,
         rerender: () => {

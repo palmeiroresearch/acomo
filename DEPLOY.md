@@ -18,12 +18,6 @@ bundle OTA y publica `dist/` en Pages.
 El fichero [`public/CNAME`](public/CNAME) ya lleva el dominio; Vite lo copia a
 `dist/` en cada build, así que el dominio no se pierde al redesplegar.
 
-### Secret opcional
-
-`ELTOQUE_API_KEY` — si algún día elToque entrega una key, añadirla en
-**Settings → Secrets and variables → Actions**. El proveedor `eltoque_api` pasa
-a ser la fuente activa en la siguiente corrida, sin tocar código.
-
 ---
 
 ## APK de Android

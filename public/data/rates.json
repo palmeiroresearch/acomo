@@ -1,15 +1,13 @@
 {
   "schema": 2,
-  "generated_at": "2026-10-21T20:42:22Z",
+  "generated_at": "2026-10-21T20:57:44Z",
   "informal": {
     "source": "cubadivisas",
     "label": "cubadivisas.com",
     "source_url": "https://cubadivisas.com/",
-    "updated_at": "2026-10-21T20:42:22Z",
+    "updated_at": "2026-10-21T20:57:43Z",
     "attempted": [
-      "eltoque_api:no_key",
-      "cubadivisas:ok",
-      "directoriocubano:cloudflare"
+      "cubadivisas:ok"
     ],
     "rates": {
       "CAD": {

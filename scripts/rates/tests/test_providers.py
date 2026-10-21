@@ -17,7 +17,7 @@ import pathlib
 import pytest
 
 from scripts.rates import bcc, validate
-from scripts.rates.providers import cubadivisas, directoriocubano, eltoque_api
+from scripts.rates.providers import cubadivisas
 from scripts.rates.providers.base import Rate, is_cloudflare_challenge
 
 FIXTURES = pathlib.Path(__file__).parent / "fixtures"
@@ -50,74 +50,6 @@ def test_cubadivisas_keeps_change_fields():
 
 def test_cubadivisas_returns_empty_on_unknown_markup():
     assert cubadivisas.parse("<html><body>sin tasas aqui</body></html>") == {}
-
-
-# ───────────────────────────── directoriocubano ─────────────────────────────
-
-def test_directoriocubano_parses_frozen_page():
-    rates = directoriocubano.parse(fixture("directoriocubano.html"))
-
-    assert set(rates) == {"USD", "EUR", "MLC", "ZELLE", "CAD", "CLA", "MXN"}
-    # Única de las dos fuentes informales que publica MXN.
-    assert rates["MXN"].cup == 51.92
-
-
-def test_directoriocubano_reads_cup_not_cross_rates():
-    """Regresión del error de parseo más probable en esta fuente.
-
-    Cada moneda trae además su cruce contra MLC y USD
-    (`"USD": {"CUP": 815, "MLC": 1.49, "USD": null}`). Leer el campo equivocado
-    daría 1.49, un número positivo y perfectamente creíble para un validador
-    ingenuo, pero absurdo como tasa en CUP.
-    """
-    rates = directoriocubano.parse(fixture("directoriocubano.html"))
-
-    assert rates["USD"].cup > 100
-    assert rates["USD"].cup != 1.49
-
-
-def test_directoriocubano_excludes_cup_itself():
-    """CUP→CUP viene en el blob como 1 y no es una tasa."""
-    rates = directoriocubano.parse(fixture("directoriocubano.html"))
-
-    assert "CUP" not in rates
-
-
-def test_directoriocubano_survives_braces_inside_strings():
-    """El recorte cuenta llaves, así que una llave dentro de un string no debe
-    desbalancear la cuenta."""
-    html = '<script>var tasas={"informales":{"USD":{"CUP":800,"nota":"a{b}c"}}};</script>'
-
-    rates = directoriocubano.parse(html)
-
-    assert rates["USD"].cup == 800
-
-
-def test_directoriocubano_returns_empty_without_assignment():
-    assert directoriocubano.parse("<html><body>nada</body></html>") == {}
-
-
-# ───────────────────────────────── elToque ─────────────────────────────────
-
-def test_eltoque_api_accepts_plain_numbers():
-    payload = {"tasas": {"USD": 816.5, "ECU": 915, "MLC": 563.71}}
-
-    rates = eltoque_api.parse_payload(payload)
-
-    assert rates["USD"].cup == 816.5
-    assert rates["EUR"].cup == 915.0
-
-
-def test_eltoque_api_accepts_median_objects():
-    payload = {"tasas": {"USD": {"median": 816.5, "min": 800, "max": 830}}}
-
-    assert eltoque_api.parse_payload(payload)["USD"].cup == 816.5
-
-
-def test_eltoque_api_ignores_unknown_codes():
-    rates = eltoque_api.parse_payload({"tasas": {"USD": 816.5, "XYZ": 1}})
-
-    assert set(rates) == {"USD"}
 
 
 # ──────────────────────────────── Cloudflare ────────────────────────────────
@@ -214,7 +146,7 @@ def test_cross_check_flags_divergent_sources():
 
 
 def test_cross_check_tolerates_small_lag():
-    """directoriocubano va unas horas rezagada; eso no es un conflicto."""
+    """Una fuente que va unas horas rezagada no es un conflicto, solo retraso."""
     winner = {"USD": Rate(cup=815)}
     other = [{"USD": Rate(cup=800)}]  # 1.8 % de diferencia
 

@@ -32,14 +32,29 @@ De ahí salen las dos reglas que gobiernan el diseño actual:
 
 ### Mercado informal
 
-Una cadena de proveedores: gana el primero que devuelve datos válidos.
+**cubadivisas.com**, y solo esa. Publica con los nombres de campo literales de
+elToque (`ECU` para el euro, `USD_Zelle.CUP`, `median`), así que casi con
+certeza consume su API con key propia: es lo más cercano al TRMI accesible sin
+key.
 
-| Orden | Proveedor | Estado | Notas |
-|---|---|---|---|
-| 1 | `eltoque_api` | Inactivo | API oficial del TRMI. Requiere una key que elToque no entrega. Se activa sola si aparece el secret `ELTOQUE_API_KEY`. |
-| 2 | `eltoque_browser` | Experimental | Intento de pasar el reto JS de Cloudflare con un Chromium real. Solo corre en el chequeo semanal. |
-| 3 | `cubadivisas` | **Activo** | Publica con los nombres de campo literales de elToque (`ECU`, `USD_Zelle.CUP`, `median`), así que casi con certeza consume su API con key propia. |
-| 4 | `directoriocubano` | Respaldo | Va unas horas rezagado, pero es el único que publica **MXN**, así que se consulta siempre para completar esa moneda. |
+Hubo una cadena de cuatro proveedores. Una corrida real en Actions demostró que
+las otras tres no sirven desde un runner, y se eliminaron:
+
+| Proveedor | Por qué se quitó |
+|---|---|
+| `eltoque_api` | Requiere una API key que elToque no entrega. |
+| `eltoque_browser` | Chromium contra el reto de Cloudflare: nunca lo pasó. |
+| `directoriocubano` | Responde desde una IP residencial, pero el datacenter de GitHub recibe el reto de Cloudflare. |
+
+De ahí la lección que conviene no olvidar: **probar una fuente desde una máquina
+doméstica no dice nada sobre si funcionará en CI.** La única prueba válida es la
+corrida real. Mantener proveedores que siempre fallan solo añadía ruido al
+registro de intentos y daba una falsa sensación de respaldo.
+
+Con una sola fuente, lo que cubre el riesgo no es la redundancia sino la
+detección: los tests contra HTML congelado y el chequeo semanal avisan por issue
+el día que cambie de formato, y mientras tanto la app sigue sirviendo el último
+valor bueno con su antigüedad a la vista.
 
 > Las tasas informales **no son el TRMI de elToque** y la app nunca lo dice. La
 > fuente real aparece nombrada en pantalla. Son referenciales.
@@ -80,9 +95,8 @@ npm run dev        # servidor de desarrollo, recarga en caliente
 ```bash
 pip install -r scripts/requirements.txt
 
-python -m scripts.rates.main --dry-run --no-browser   # sin escribir
-python -m scripts.rates.main --provider cubadivisas   # aislar una fuente
-python -m pytest scripts/rates/tests                  # parsers vs HTML congelado
+python -m scripts.rates.main --dry-run     # resuelve e imprime, sin escribir
+python -m pytest scripts/rates/tests       # parsers vs HTML congelado
 ```
 
 Los tests corren contra fixtures congeladas, sin red. Son el detector de «una
@@ -122,14 +136,28 @@ sin error visible. Por eso todo recurso remoto pasa por `remote()` en
 
 | Workflow | Cuándo | Qué hace |
 |---|---|---|
-| `rates.yml` | Cada 2 h, 06:00–22:00 hora de Cuba | Actualiza `public/data/`. Abre issue si todo falla. |
+| `rates.yml` | Cada 30 min | Actualiza `public/data/`. Abre issue si falla. |
 | `deploy.yml` | Push a `main` | Compila, empaqueta el OTA y publica en Pages. |
 | `ci.yml` | Push y PR | Tipos, tests del core y tests de los parsers. |
-| `sources-health.yml` | Lunes | Prueba **todas** las fuentes, incluida la de Chromium. |
+| `sources-health.yml` | Lunes | Diagnostica la fuente y los parsers, sin publicar. |
 
-`sources-health.yml` existe porque la corrida normal se detiene en la primera
-fuente que funciona: sin él, no sabríamos que el respaldo lleva un mes roto
-hasta el día que lo necesitemos.
+Correr las tasas cada 30 minutos —también de noche— sale casi gratis: si la tasa
+no cambió no hay commit, y sin commit no hay deploy. Es el mismo ritmo al que se
+refresca la fuente.
+
+### Cómo se entera la app
+
+Tres momentos, sin que el usuario tenga que tocar nada:
+
+- Al abrir la app o entrar en la pantalla de tasas.
+- Al volver desde segundo plano (`visibilitychange`). En móvil es el caso
+  principal: la app pasa horas suspendida.
+- Al recuperar la conexión (`online`), y cada 5 minutos con la pantalla abierta.
+
+Hay un suelo de 60 s entre peticiones y se omiten sin conexión. El coste en
+datos es casi nulo: la petición va con `cache: 'no-cache'`, así que si el
+fichero no cambió el servidor responde 304 sin cuerpo — importa con tarifas de
+datos caras.
 
 ---
 

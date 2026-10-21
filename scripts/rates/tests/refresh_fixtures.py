@@ -24,20 +24,6 @@ from ..providers.base import HEADERS, TIMEOUT
 HERE = pathlib.Path(__file__).parent / "fixtures"
 
 
-def _slice_balanced(text: str, start: int) -> str:
-    """Recorta un objeto JSON contando llaves desde la primera '{'."""
-    i = text.index("{", start)
-    begin, depth = i, 0
-    while True:
-        if text[i] == "{":
-            depth += 1
-        elif text[i] == "}":
-            depth -= 1
-            if depth == 0:
-                return text[begin : i + 1]
-        i += 1
-
-
 def refresh_cubadivisas() -> None:
     html = requests.get("https://cubadivisas.com/", headers=HEADERS, timeout=TIMEOUT).text
     match = re.search(r'\[\{[^\[\]]*?"market"\s*:\s*"informal".*?\}\]', html, re.S)
@@ -53,23 +39,6 @@ def refresh_cubadivisas() -> None:
     print(f"cubadivisas.html actualizada ({len(match.group(0))} B de payload)")
 
 
-def refresh_directoriocubano() -> None:
-    html = requests.get(
-        "https://www.directoriocubano.info/cadeca/", headers=HEADERS, timeout=TIMEOUT
-    ).text
-    if "var tasas=" not in html:
-        raise SystemExit("directoriocubano: no se encontró `var tasas=` — cambió el formato")
-    blob = _slice_balanced(html, html.index("var tasas="))
-    (HERE / "directoriocubano.html").write_text(
-        "<!doctype html><html><head><title>CADECA</title></head><body>\n"
-        '<div class="dcx-widget"></div>\n<script>var tasas='
-        + blob
-        + ";var tipo='informales';</script>\n</body></html>\n",
-        encoding="utf-8",
-    )
-    print(f"directoriocubano.html actualizada ({len(blob)} B de payload)")
-
-
 def refresh_bcc() -> None:
     data = requests.get(
         "https://api.bc.gob.cu/v1/tasas-de-cambio/activas", headers=HEADERS, timeout=TIMEOUT
@@ -83,7 +52,6 @@ def refresh_bcc() -> None:
 if __name__ == "__main__":
     HERE.mkdir(parents=True, exist_ok=True)
     refresh_cubadivisas()
-    refresh_directoriocubano()
     refresh_bcc()
     print("\nAviso: si los tests fallan tras esto, el formato cambió de verdad "
           "y hay que ajustar el parser — no relajar el test.")
