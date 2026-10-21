@@ -86,11 +86,24 @@ jobs:
 
           # Reintento con rebase: con una corrida cada 30 min, otra puede haber
           # adelantado la rama entre el checkout y este punto.
+          #
+          # El `if` no es cosmético. Este paso corre con `set -e` (lo trae
+          # `shell: bash`), y en una lista `A && B` el -e aborta el script en
+          # cuanto A falla — así que escrito como `git pull && git push && exit 0`
+          # el bucle salía al primer intento y los reintentos nunca ocurrían.
+          # Dentro de un `if`, bash suspende el -e y el bucle funciona de verdad.
           for attempt in 1 2 3; do
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push && exit 0
-            echo "Push falló (intento $attempt), reintentando…"
+            if git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push; then
+              echo "Publicado."
+              exit 0
+            fi
+            echo "Push falló (intento $attempt de 3)."
             sleep 5
           done
+
+          echo "::error::No se pudo publicar tras 3 intentos. La causa más común \
+          es que el token sea de solo lectura: Settings → Actions → General → \
+          Workflow permissions → «Read and write permissions»."
           exit 1
 
       - name: Avisar por issue si la cadena falló
