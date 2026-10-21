@@ -1,0 +1,60 @@
+name: Deploy
+
+# Publica la app en GitHub Pages (acomo.palmeiromed.com).
+#
+# Corre también con los commits de tasas, a propósito: es lo que hace que una
+# tasa nueva llegue de verdad a los usuarios. Sin esto, el pipeline actualizaría
+# el repo y la app seguiría sirviendo el JSON viejo del último build.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Si entra un commit de tasas mientras despliega, se cancela el anterior: solo
+# importa publicar el estado más reciente.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+      - name: Empaquetar el bundle OTA
+        # Se genera DESPUÉS del build y ANTES de copiarlo dentro de dist, en ese
+        # orden a propósito: así el zip contiene el sitio sin incluirse a sí
+        # mismo, y su sha256 corresponde exactamente a lo que se publica.
+        run: npm run ota:release
+
+      - name: Añadir el bundle OTA al sitio
+        run: |
+          mkdir -p dist/ota
+          cp -r ota/. dist/ota/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

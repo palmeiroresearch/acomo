@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    # Los commits de tasas solo cambian datos y corren cada 2 h: no tiene
+    # sentido gastar minutos de CI en ellos. El deploy sí se dispara con ellos.
+    paths-ignore:
+      - 'public/data/**'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  parsers:
+    # Estos tests son el detector de «una fuente cambió de formato»: corren los
+    # parsers contra HTML congelado, sin red.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+      - run: pip install -r scripts/requirements.txt
+      - run: python -m pytest scripts/rates/tests -v
