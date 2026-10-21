@@ -1,0 +1,173 @@
+name: Tasas
+
+# Actualiza public/data/rates.json desde las fuentes externas.
+#
+# Correcciones respecto al workflow original, que llevaba meses fallando sin
+# que nadie se enterara:
+#   - `concurrency` para que dos corridas no se pisen al hacer push.
+#   - `git pull --rebase` antes del push (antes fallaba si entraba otro commit).
+#   - Abre un issue cuando la cadena falla, y lo cierra al recuperarse. Esto es
+#     lo que faltaba: antes el único rastro era un check rojo que nadie miraba.
+#   - Sin `[skip ci]` en el commit: el deploy TIENE que correr para que la tasa
+#     nueva llegue a Pages.
+#
+# Aviso de GitHub: los cron se desactivan solos tras 60 días sin actividad en el
+# repo. Los commits del bot cuentan como actividad, pero si el repo queda
+# inactivo de verdad hay que reactivarlo a mano en la pestaña Actions.
+
+on:
+  schedule:
+    # Cada 2 h de 06:00 a 22:00 hora de Cuba (UTC-4). De madrugada el mercado
+    # informal no se mueve, así que no se gastan corridas.
+    - cron: '0 10,12,14,16,18,20,22,0,2 * * *'
+  workflow_dispatch:
+    inputs:
+      try_eltoque_browser:
+        description: 'Intentar saltar Cloudflare en eltoque.com con Chromium (lento, ~500 MB)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: rates
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+
+      - name: Instalar dependencias
+        run: pip install -r scripts/requirements.txt
+
+      - name: Instalar Chromium para el intento con elToque
+        if: inputs.try_eltoque_browser
+        run: |
+          pip install -r scripts/requirements-browser.txt
+          playwright install --with-deps chromium
+
+      - name: Obtener tasas
+        id: fetch
+        continue-on-error: true
+        # `shell: bash` no es decorativo: añade `-o pipefail`, que el shell por
+        # defecto de Actions (`bash -e`) NO trae. Sin él, el código de salida de
+        # la tubería sería el de `tee` —siempre 0— y un fallo del pipeline se
+        # daría por bueno, que es exactamente el fallo silencioso que este
+        # rebuild existe para eliminar.
+        shell: bash
+        env:
+          # Vacío hasta que elToque entregue una API key. En cuanto exista el
+          # secret, `eltoque_api` pasa a ser la fuente activa sin tocar código.
+          ELTOQUE_API_KEY: ${{ secrets.ELTOQUE_API_KEY }}
+        run: |
+          python -m scripts.rates.main \
+            ${{ inputs.try_eltoque_browser && ' ' || '--no-browser' }} \
+            | tee rates-run.log
+
+      - name: Resumen
+        run: |
+          {
+            echo "### Tasas"
+            echo
+            echo '```'
+            cat rates-run.log || echo "(sin salida)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publicar cambios
+        if: steps.fetch.outcome == 'success'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/rates.json public/data/history.json
+
+          if git diff --staged --quiet; then
+            echo "Sin cambios en las tasas."
+            exit 0
+          fi
+
+          SRC="${{ steps.fetch.outputs.informal_source }}"
+          git commit -m "tasas: actualizar desde ${SRC:-fuentes}"
+
+          # Reintento con rebase: otra corrida o un push manual pueden haber
+          # adelantado la rama entre el checkout y este punto.
+          for attempt in 1 2 3; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push && exit 0
+            echo "Push falló (intento $attempt), reintentando…"
+            sleep 5
+          done
+          exit 1
+
+      - name: Avisar por issue si la cadena falló
+        if: steps.fetch.outcome != 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'Pipeline de tasas: todas las fuentes fallaron';
+            const log = require('fs').existsSync('rates-run.log')
+              ? require('fs').readFileSync('rates-run.log', 'utf8').slice(-3000)
+              : '(sin log)';
+            const body = [
+              'La cadena de proveedores no devolvió ningún dato válido y no había',
+              'valor previo que arrastrar, así que **no se publicó nada**.',
+              '',
+              `Corrida: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              '',
+              '```',
+              log,
+              '```',
+            ].join('\n');
+
+            const { data: open } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'tasas',
+            });
+            const existing = open.find(i => i.title === title);
+
+            if (existing) {
+              await github.rest.issues.createComment({
+                ...context.repo, issue_number: existing.number, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                ...context.repo, title, body, labels: ['tasas'],
+              });
+            }
+
+      - name: Cerrar el issue al recuperarse
+        if: steps.fetch.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'Pipeline de tasas: todas las fuentes fallaron';
+            const { data: open } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'tasas',
+            });
+            for (const issue of open.filter(i => i.title === title)) {
+              await github.rest.issues.createComment({
+                ...context.repo, issue_number: issue.number,
+                body: `Recuperado: la fuente \`${{ steps.fetch.outputs.informal_source }}\` volvió a responder.`,
+              });
+              await github.rest.issues.update({
+                ...context.repo, issue_number: issue.number, state: 'closed',
+              });
+            }
+
+      - name: Marcar la corrida si se arrastró dato viejo
+        if: steps.fetch.outputs.carried != ''
+        run: |
+          echo "::warning::Se arrastró el dato anterior de: ${{ steps.fetch.outputs.carried }}. \
+          La app lo mostrará con su antigüedad real, pero conviene revisar las fuentes."
+
+      - name: Fallar si no se publicó nada
+        if: steps.fetch.outcome != 'success'
+        run: exit 1
