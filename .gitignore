@@ -1,0 +1,38 @@
+node_modules/
+dist/
+.vite/
+*.local
+
+# Capacitor / Android
+mobile/node_modules/
+mobile/android/.gradle/
+mobile/android/build/
+mobile/android/app/build/
+mobile/android/local.properties
+mobile/android/.idea/
+*.keystore
+*.jks
+
+# El bundle OTA y su manifiesto se generan en el deploy a partir del mismo
+# `dist` que se publica (ver .github/workflows/deploy.yml). Así el sha256 del
+# manifiesto no puede quedar desparejado del zip, que es el fallo clásico de
+# generarlos a mano por separado. En local se crean con `npm run ota:release`.
+#
+# La barra inicial NO es opcional: sin ella, `ota/` casa con cualquier
+# directorio llamado «ota» a cualquier profundidad, y se tragaba `src/ota/`
+# —el updater de la app nativa— dejándolo fuera del repo sin avisar. El build
+# seguía funcionando porque Vite compila desde el disco, no desde git.
+/ota/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
