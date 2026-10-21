@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- Lo sincroniza ui/theme.ts con el tema efectivo; este es el valor inicial. -->
+    <meta name="theme-color" content="#f2f2f7">
+    <meta name="description" content="Tasas de cambio de Cuba —  mercado informal y Segmento III del Banco Central — y calculadora. Funciona sin conexión.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="A Cómo">
+    <title>A Cómo — tasas de cambio de Cuba</title>
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" href="/icon-192.png">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+</head>
+<body>
+    <!-- Aviso de sin conexión. Se muestra con la clase .is-offline en body. -->
+    <div class="offline-bar" role="status">Sin conexión — mostrando los últimos datos guardados</div>
+
+    <main>
+        <!-- Las tres pantallas existen desde el inicio y se desplazan con CSS.
+             `inert` y `aria-hidden` los gestiona ui/screens.ts. -->
+        <section class="screen" data-screen="rates" aria-label="Tasas de cambio"></section>
+        <section class="screen" data-screen="calc" aria-label="Calculadora"></section>
+        <section class="screen" data-screen="settings" aria-label="Ajustes"></section>
+    </main>
+
+    <div id="update-banner" class="update-banner" role="region" aria-label="Actualización disponible">
+        <div class="update-banner__text">
+            <p class="update-banner__title">Nueva versión disponible</p>
+            <p class="update-banner__sub">Toca «Actualizar» para instalarla</p>
+        </div>
+        <div class="update-banner__actions">
+            <button id="update-apply" class="btn-primary" type="button">Actualizar</button>
+            <button id="update-dismiss" class="btn-secondary" type="button">Luego</button>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

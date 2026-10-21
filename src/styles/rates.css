@@ -1,0 +1,254 @@
+/* Pantalla de tasas: píldora de estado, tarjetas y conversor. */
+
+/* ── Píldora de frescura ───────────────────────────────────────────────── */
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 2px 4px 16px;
+    font-size: 0.75rem;
+    color: var(--color-text-2);
+}
+
+.status:empty {
+    display: none;
+}
+
+.status__dot {
+    flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-text-3);
+}
+
+/* Sin esto, un nombre de fuente largo ensancha la fila y desborda la pantalla. */
+.status__text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* El color del punto es la señal rápida de si el dato sirve. */
+.status--fresh .status__dot { background: var(--color-fresh); }
+.status--aging .status__dot { background: var(--color-aging); }
+.status--stale .status__dot { background: var(--color-stale); }
+
+.status--stale .status__text {
+    color: var(--color-stale);
+    font-weight: 600;
+}
+
+.status__source {
+    margin-left: auto;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* ── Tarjetas de tasa ──────────────────────────────────────────────────── */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.rate {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 13px 14px;
+    background: var(--color-surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    /* Imprescindible: un grid item mantiene `min-width: auto`, así que una
+       etiqueta larga con `nowrap` («Moneda Libremente Convertible») ensancha la
+       tarjeta por encima de su columna y desborda la pantalla entera, aunque el
+       track esté declarado como minmax(0, 1fr). */
+    min-width: 0;
+}
+
+/* La primera moneda (normalmente el USD) ocupa el ancho completo: es la que
+   casi todo el mundo abre la app para ver. */
+.rate--primary {
+    grid-column: 1 / -1;
+}
+
+.rate__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rate__code {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--color-accent);
+}
+
+.rate__change {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.rate__change--up { color: var(--color-up); }
+.rate__change--down { color: var(--color-down); }
+
+.rate__value {
+    min-width: 0;
+    font-size: 1.375rem;
+    font-weight: 700;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+}
+
+.rate--primary .rate__value {
+    font-size: 2rem;
+}
+
+.rate__unit {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-3);
+}
+
+.rate__label {
+    min-width: 0;
+    font-size: 0.6875rem;
+    color: var(--color-text-3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rate--skeleton {
+    min-height: 78px;
+    animation: pulse 1.4s ease-in-out infinite;
+}
+
+.rate--skeleton:first-child {
+    grid-column: 1 / -1;
+    min-height: 96px;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 0.85; }
+}
+
+/* ── Conversor ─────────────────────────────────────────────────────────── */
+
+.converter {
+    padding: 16px;
+}
+
+.converter:empty {
+    display: none;
+}
+
+.converter__head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.converter__head .section__title {
+    margin: 0;
+}
+
+.segmented {
+    display: flex;
+    margin-left: auto;
+    padding: 2px;
+    border-radius: 9px;
+    background: var(--color-surface-2);
+}
+
+.segmented__item {
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-2);
+    transition: background var(--dur-tap) ease, color var(--dur-tap) ease;
+}
+
+.segmented__item--on {
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-card);
+}
+
+.segmented__item:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.converter__row {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.field {
+    border: none;
+    border-radius: var(--radius-field);
+    background: var(--color-surface-2);
+    outline: none;
+}
+
+.field--amount,
+.field--result {
+    flex: 1;
+    min-width: 0;
+    padding: 13px 14px;
+    font-size: 1.3125rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.field--amount:focus {
+    box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.field--result {
+    display: flex;
+    align-items: center;
+    color: var(--color-text-2);
+    /* Un resultado largo no debe empujar el selector de moneda fuera. */
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.field--currency {
+    min-width: 84px;
+    padding: 10px 8px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-align: center;
+    text-align-last: center;
+    appearance: none;
+    cursor: pointer;
+}
+
+.swap {
+    display: grid;
+    place-items: center;
+    width: var(--tap-min);
+    height: var(--tap-min);
+    margin: 8px auto;
+    border-radius: 50%;
+    background: var(--color-surface-2);
+    color: var(--color-accent);
+    transition: transform 240ms var(--ease-screen);
+}
+
+.swap:active {
+    transform: rotate(180deg);
+}

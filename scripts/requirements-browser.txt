@@ -1,0 +1,10 @@
+# Habilita el proveedor `eltoque_browser` — el intento experimental de superar
+# el reto JS de Cloudflare en eltoque.com con un Chromium real.
+#
+# Instalación completa:
+#     pip install -r scripts/requirements-browser.txt
+#     playwright install --with-deps chromium
+#
+# Está separado de requirements.txt porque Chromium pesa ~500 MB y el resto del
+# pipeline funciona sin él.
+playwright>=1.47,<2

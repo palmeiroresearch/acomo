@@ -1,0 +1,149 @@
+/* Pantalla de calculadora: display y teclado estilo iOS. */
+
+.calc-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    min-height: 0;
+}
+
+/* ── Display ───────────────────────────────────────────────────────────── */
+
+.display {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
+    max-width: var(--width-keypad);
+    padding: 0 18px 14px;
+    overflow: hidden;
+}
+
+.display__value {
+    font-size: var(--display-xl);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    font-variant-numeric: tabular-nums;
+    transition: font-size 120ms ease;
+}
+
+/* Botón de retroceso: iOS no lo tiene (usa un gesto), pero sin él corregir un
+   dígito obligaba a reescribir el número entero. Aparece solo cuando hay algo
+   que borrar, para no añadir ruido en el estado inicial. */
+.display__backspace {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: var(--tap-min);
+    height: var(--tap-min);
+    margin-bottom: 6px;
+    border-radius: 50%;
+    color: var(--color-text-3);
+    transition: background var(--dur-tap) ease, color var(--dur-tap) ease;
+}
+
+.display__backspace:hover,
+.display__backspace:active {
+    background: var(--color-surface-2);
+    color: var(--color-text);
+}
+
+/* Necesario: el `display: grid` de arriba es una regla de autor y gana al
+   `display: none` que el navegador aplica a [hidden], así que sin esto el
+   botón seguía visible con la pantalla en 0. */
+.display__backspace[hidden] {
+    display: none;
+}
+
+/* ── Teclado ───────────────────────────────────────────────────────────── */
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap-key);
+    width: 100%;
+    max-width: var(--width-keypad);
+    padding: 0 var(--gap-key) calc(var(--gap-key) + env(safe-area-inset-bottom, 0px));
+}
+
+.key {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    width: 100%;
+    border-radius: 50%;
+    font-size: 1.9rem;
+    font-weight: 400;
+    user-select: none;
+    transition: filter var(--dur-tap) ease, background var(--dur-tap) ease;
+}
+
+.key:active,
+.key--flash {
+    filter: brightness(1.25);
+}
+
+.key--number,
+.key--decimal {
+    background: var(--key-number);
+    color: var(--key-number-text);
+}
+
+.key--utility {
+    background: var(--key-utility);
+    color: var(--key-utility-text);
+    font-size: 1.6rem;
+}
+
+.key--operator,
+.key--equals {
+    background: var(--key-operator);
+    color: var(--key-operator-text);
+}
+
+/* Operador pendiente: se invierte, como en iOS. */
+.key--operator.key--on {
+    background: var(--key-operator-on);
+    color: var(--key-operator-on-text);
+}
+
+/* El 0 ocupa dos columnas y alinea su etiqueta con el resto de la columna. */
+.key--wide {
+    grid-column: span 2;
+    aspect-ratio: auto;
+    border-radius: 999px;
+    justify-items: start;
+    padding-left: calc((100% - var(--gap-key)) / 4 / 2 - 0.5ch);
+}
+
+@media (hover: hover) {
+    .key--number:hover,
+    .key--decimal:hover { background: color-mix(in srgb, var(--key-number) 85%, white); }
+    .key--utility:hover { background: color-mix(in srgb, var(--key-utility) 85%, white); }
+    .key--operator:hover,
+    .key--equals:hover { background: var(--color-accent-strong); }
+}
+
+/* Pantallas bajas (móvil en horizontal, ventanas pequeñas): el teclado manda,
+   así que se recorta el display antes que los botones. */
+@media (max-height: 700px) {
+    :root {
+        --gap-key: 8px;
+        --display-xl: 3.4rem;
+        --display-lg: 2.8rem;
+        --display-md: 2.3rem;
+        --display-sm: 1.9rem;
+    }
+
+    .key {
+        font-size: 1.5rem;
+    }
+}

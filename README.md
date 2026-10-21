@@ -1,0 +1,139 @@
+# A Cómo
+
+Tasas de cambio de Cuba —mercado informal y Segmento III del Banco Central— con
+calculadora. PWA instalable y APK de Android, pensada para funcionar con mala
+conexión o sin ninguna.
+
+**Producción:** https://acomo.palmeiromed.com
+
+---
+
+## Por qué este proyecto se reconstruyó
+
+La versión anterior scrapeaba `eltoque.com` desde un GitHub Action. **Nunca
+funcionó.** eltoque.com está detrás de Cloudflare y devuelve `HTTP 403` con la
+página «Just a moment…» a cualquier cliente que no sea un navegador real, así
+que el `__NEXT_DATA__` que el script buscaba no existía en la respuesta. El
+script moría en cada corrida y la app sirvió valores de relleno del 28/07/2026
+durante meses, presentándolos como si fueran del día.
+
+De ahí salen las dos reglas que gobiernan el diseño actual:
+
+1. **Un dato viejo se muestra como viejo.** Cada bloque de tasas viaja con su
+   `updated_at` y la UI dice «actualizado hace X», en ámbar pasadas 6 h y en
+   rojo pasadas 24 h.
+2. **Un fallo tiene que ser ruidoso.** Cada corrida publica en `rates.json` qué
+   fuentes se intentaron y por qué fallaron, y el workflow abre un issue si la
+   cadena entera se cae.
+
+---
+
+## Fuentes de datos
+
+### Mercado informal
+
+Una cadena de proveedores: gana el primero que devuelve datos válidos.
+
+| Orden | Proveedor | Estado | Notas |
+|---|---|---|---|
+| 1 | `eltoque_api` | Inactivo | API oficial del TRMI. Requiere una key que elToque no entrega. Se activa sola si aparece el secret `ELTOQUE_API_KEY`. |
+| 2 | `eltoque_browser` | Experimental | Intento de pasar el reto JS de Cloudflare con un Chromium real. Solo corre en el chequeo semanal. |
+| 3 | `cubadivisas` | **Activo** | Publica con los nombres de campo literales de elToque (`ECU`, `USD_Zelle.CUP`, `median`), así que casi con certeza consume su API con key propia. |
+| 4 | `directoriocubano` | Respaldo | Va unas horas rezagado, pero es el único que publica **MXN**, así que se consulta siempre para completar esa moneda. |
+
+> Las tasas informales **no son el TRMI de elToque** y la app nunca lo dice. La
+> fuente real aparece nombrada en pantalla. Son referenciales.
+
+### Oficial
+
+`https://api.bc.gob.cu/v1/tasas-de-cambio/activas`, tomando `tasaEspecial`, que
+es el Segmento III. El API no tiene CORS —devuelve 403 en cuanto la petición
+lleva header `Origin`— y por eso hay que proxiarla a un JSON estático en vez de
+llamarla desde el navegador.
+
+---
+
+## Desarrollo
+
+Este ya **no** es un proyecto de HTML plano: `index.html` carga TypeScript, que
+el navegador no entiende por sí solo. Abrirlo con Live Server muestra una página
+en blanco. Usa:
+
+```bash
+npm install
+npm run dev        # servidor de desarrollo, recarga en caliente
+```
+
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Servidor de desarrollo (sustituye a Live Server). |
+| `npm run build` | Compila a `dist/`, que es lo que se publica. |
+| `npm run preview` | Sirve `dist/` tal como lo verá GitHub Pages. |
+| `npm test` | Tests del core (calculadora, conversión, formateo). |
+| `npm run typecheck` | Comprueba tipos de la app y del service worker. |
+| `npm run rates` | Actualiza las tasas en local. |
+| `npm run rates:dry` | Resuelve las tasas e imprime, sin escribir nada. |
+| `npm run ota:release` | Empaqueta el bundle OTA desde `dist/`. |
+
+### Pipeline de tasas
+
+```bash
+pip install -r scripts/requirements.txt
+
+python -m scripts.rates.main --dry-run --no-browser   # sin escribir
+python -m scripts.rates.main --provider cubadivisas   # aislar una fuente
+python -m pytest scripts/rates/tests                  # parsers vs HTML congelado
+```
+
+Los tests corren contra fixtures congeladas, sin red. Son el detector de «una
+fuente cambió de formato»: cuando fallen en CI, hay que regenerar las fixtures
+con `python -m scripts.rates.tests.refresh_fixtures` y ajustar el parser —nunca
+relajar el test.
+
+---
+
+## Estructura
+
+```
+src/core/      Lógica pura y testeada: calculadora, conversión, formateo
+src/data/      Carga de tasas con caché en localStorage
+src/ui/        Pantallas: tasas, calculadora, ajustes
+src/ota/       Actualizaciones OTA de la app nativa
+src/sw.ts      Service worker (se compila aparte, ver tsconfig.sw.json)
+scripts/rates/ Pipeline de tasas en Python
+mobile/        Envoltorio Capacitor para Android
+public/data/   Artefactos que el Action actualiza
+```
+
+### Dónde está la configuración
+
+Todas las URLs viven en [`src/config.ts`](src/config.ts). Cambiar de dominio es
+cambiar `SITE_URL`.
+
+**Cuidado con las rutas en la app nativa:** dentro del WebView la página se
+sirve desde `https://localhost`, no desde el dominio real. Una ruta relativa
+apuntaría al localhost del teléfono y la app se quedaría sin tasas para siempre,
+sin error visible. Por eso todo recurso remoto pasa por `remote()` en
+`config.ts`, que usa ruta absoluta en nativo.
+
+---
+
+## Automatización
+
+| Workflow | Cuándo | Qué hace |
+|---|---|---|
+| `rates.yml` | Cada 2 h, 06:00–22:00 hora de Cuba | Actualiza `public/data/`. Abre issue si todo falla. |
+| `deploy.yml` | Push a `main` | Compila, empaqueta el OTA y publica en Pages. |
+| `ci.yml` | Push y PR | Tipos, tests del core y tests de los parsers. |
+| `sources-health.yml` | Lunes | Prueba **todas** las fuentes, incluida la de Chromium. |
+
+`sources-health.yml` existe porque la corrida normal se detiene en la primera
+fuente que funciona: sin él, no sabríamos que el respaldo lleva un mes roto
+hasta el día que lo necesitemos.
+
+---
+
+## Licencia y datos
+
+Las tasas provienen de agregadores públicos de terceros y son **referenciales**.
+No son una fuente oficial ni sirven como base para reclamaciones.

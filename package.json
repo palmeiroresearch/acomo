@@ -1,0 +1,24 @@
+{
+    "name": "acomo",
+    "version": "2.0.0",
+    "private": true,
+    "type": "module",
+    "description": "A Cómo — tasas de cambio de Cuba y calculadora",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview --port 4173",
+        "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.sw.json",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "rates": "python -m scripts.rates.main --no-browser",
+        "rates:dry": "python -m scripts.rates.main --dry-run --no-browser",
+        "ota:release": "node scripts/ota-release.mjs"
+    },
+    "devDependencies": {
+        "@types/node": "^26.6.5",
+        "typescript": "^7.0.2",
+        "vite": "^8.3.5",
+        "vitest": "^5.0.5"
+    }
+}

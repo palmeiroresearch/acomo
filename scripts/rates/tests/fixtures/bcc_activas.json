@@ -1,0 +1,292 @@
+{
+  "tasas": [
+    {
+      "_id": "6ad846d0d400fa9940a9e39f",
+      "codigoMoneda": "AUD",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "DOLAR AUSTRALIANO",
+      "tasaEspecial": 509.8626,
+      "tasaOficial": 16.7856,
+      "tasaPublica": 83.928,
+      "updatedAt": "2026-10-21T05:00:00.877Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    },
+    {
+      "_id": "6ad846d0d400fa9940a9e3a2",
+      "codigoMoneda": "CAD",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "DOLAR CANADIENSE",
+      "tasaEspecial": 518.60283,
+      "tasaOficial": 17.07334,
+      "tasaPublica": 85.36672,
+      "updatedAt": "2026-10-21T05:00:00.888Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    },
+    {
+      "_id": "6ad846d0d400fa9940a9e3a4",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "codigoMoneda": "CHF",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "FRANCOS SUIZOS",
+      "tasaEspecial": 882.56659,
+      "tasaOficial": 29.05569,
+      "tasaPublica": 145.27845,
+      "updatedAt": "2026-10-21T05:00:00.894Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    },
+    {
+      "_id": "6ad846d0d400fa9940a9e3a6",
+      "codigoMoneda": "CNY",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "YUAN CHINO",
+      "tasaEspecial": 109.1636,
+      "tasaOficial": 3.59386,
+      "tasaPublica": 17.96932,
+      "updatedAt": "2026-10-21T05:00:00.901Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    },
+    {
+      "_id": "6ad846d0d400fa9940a9e3aa",
+      "codigoMoneda": "DKK",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "CORONA DANESA",
+      "tasaEspecial": 109.54334,
+      "tasaOficial": 3.60637,
+      "tasaPublica": 18.03183,
+      "updatedAt": "2026-10-21T05:00:00.936Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    },
+    {
+      "_id": "6ad846d0d400fa9940a9e3ac",
+      "codigoMoneda": "EUR",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "EURO",
+      "tasaEspecial": 818.8128,
+      "tasaOficial": 26.9568,
+      "tasaPublica": 134.784,
+      "updatedAt": "2026-10-21T05:00:00.946Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    },
+    {
+      "_id": "6ad846d0d400fa9940a9e3b0",
+      "codigoMoneda": "GBP",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "LIBRAS ESTERLINAS",
+      "tasaEspecial": 975.07395,
+      "tasaOficial": 32.1012,
+      "tasaPublica": 160.506,
+      "updatedAt": "2026-10-21T05:00:00.955Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    },
+    {
+      "_id": "6ad846d0d400fa9940a9e3b3",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "codigoMoneda": "JPY",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "YEN JAPONES",
+      "tasaEspecial": 0.217,
+      "tasaOficial": 6.59146,
+      "tasaPublica": 1.31829,
+      "updatedAt": "2026-10-21T05:00:00.962Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    },
+    {
+      "_id": "6ad846d0d400fa9940a9e3b4",
+      "codigoMoneda": "MXN",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "PESO MEXICANO",
+      "tasaEspecial": 39.54059,
+      "tasaOficial": 1.30175,
+      "tasaPublica": 6.50874,
+      "updatedAt": "2026-10-21T05:00:00.974Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    },
+    {
+      "_id": "6ad846d0d400fa9940a9e3b5",
+      "codigoMoneda": "NOK",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "CORONA NORUEGA",
+      "tasaEspecial": 77.50949,
+      "tasaOficial": 2.55175,
+      "tasaPublica": 12.75876,
+      "updatedAt": "2026-10-21T05:00:00.982Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    },
+    {
+      "_id": "6ad846d0d400fa9940a9e3b6",
+      "codigoMoneda": "RUB",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "RUBLO RUSO",
+      "tasaEspecial": 8.84065,
+      "tasaOficial": 0.29105,
+      "tasaPublica": 1.45525,
+      "updatedAt": "2026-10-21T05:00:00.990Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    },
+    {
+      "_id": "6ad846d0d400fa9940a9e3b7",
+      "codigoMoneda": "SEK",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "CORONA SUECA",
+      "tasaEspecial": 73.60439,
+      "tasaOficial": 2.42319,
+      "tasaPublica": 12.11595,
+      "updatedAt": "2026-10-21T05:00:00.997Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    },
+    {
+      "_id": "6ad846d0d400fa9940a9e3b8",
+      "fechaDia": "2026-10-21T00:00:00.000Z",
+      "codigoMoneda": "USD",
+      "__v": 0,
+      "archivoOrigen": "API:tipo_cambio",
+      "createdAt": "2026-10-21T05:00:00.581Z",
+      "estado": "ACTIVA",
+      "fechaDesde": "2026-10-21T00:00:00.000Z",
+      "fechaHasta": "2026-10-21T00:00:00.000Z",
+      "fechaSubida": "2026-10-21T05:00:00.559Z",
+      "metadatos": {
+        "origen": "API",
+        "fuente": "tipo_cambio"
+      },
+      "nombreMoneda": "DOLAR NORTEAMERICANO",
+      "tasaEspecial": 729,
+      "tasaOficial": 24,
+      "tasaPublica": 120,
+      "updatedAt": "2026-10-21T05:00:01.004Z",
+      "fechaActivacion": "2026-10-21T00:00:00.000Z"
+    }
+  ],
+  "fechaDia": "2026-10-21T00:00:00.000Z",
+  "fechaHoy": "2026-10-21T00:00:00.000Z"
+}

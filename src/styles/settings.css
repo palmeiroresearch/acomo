@@ -1,0 +1,120 @@
+/* Pantalla de ajustes: filas estilo lista de iOS. */
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: var(--tap-min);
+    padding: 12px 14px;
+    text-align: left;
+    transition: background var(--dur-tap) ease;
+}
+
+.row + .row {
+    /* Separador que no llega al borde izquierdo, como en iOS. */
+    box-shadow: inset 0 1px 0 var(--color-border);
+}
+
+.row:hover,
+.row:active {
+    background: var(--color-surface-2);
+}
+
+.row:disabled {
+    opacity: 0.5;
+}
+
+.row__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.row__label {
+    font-size: 0.9375rem;
+}
+
+.row__hint {
+    font-size: 0.75rem;
+    color: var(--color-text-3);
+    line-height: 1.35;
+}
+
+/* Marca de selección del radiogroup. */
+.row__check {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 50%;
+}
+
+.row__check--on {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    /* Palomita dibujada con bordes para no cargar un icono por fila. */
+    background-image: linear-gradient(var(--color-on-accent), var(--color-on-accent)),
+                      linear-gradient(var(--color-on-accent), var(--color-on-accent));
+    background-repeat: no-repeat;
+    background-size: 2px 7px, 2px 11px;
+    background-position: 6px 9px, 11px 4px;
+    transform: rotate(-2deg);
+}
+
+/* Interruptor de visibilidad de moneda. */
+.toggle {
+    flex-shrink: 0;
+    position: relative;
+    width: 44px;
+    height: 27px;
+    border-radius: 999px;
+    background: var(--color-border);
+    transition: background 180ms ease;
+}
+
+.toggle--on {
+    background: var(--color-up);
+}
+
+.toggle__knob {
+    position: absolute;
+    top: 2.5px;
+    left: 2.5px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 25%);
+    transition: transform 180ms var(--ease-screen);
+}
+
+.toggle--on .toggle__knob {
+    transform: translateX(17px);
+}
+
+/* Bloque «Acerca de». */
+.card--text {
+    padding: 14px;
+}
+
+.about__line {
+    font-size: 0.8125rem;
+    color: var(--color-text-2);
+    line-height: 1.5;
+}
+
+.about__line + .about__line {
+    margin-top: 4px;
+}
+
+.about__note {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.75rem;
+    color: var(--color-text-3);
+    line-height: 1.5;
+}

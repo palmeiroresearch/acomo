@@ -1,0 +1,321 @@
+/* Reset, layout de pantallas y componentes compartidos. */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    background: var(--color-bg);
+}
+
+body {
+    color: var(--color-text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+}
+
+button,
+input,
+select,
+output {
+    font: inherit;
+    color: inherit;
+}
+
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+a {
+    color: var(--color-accent);
+}
+
+/* El foco solo se dibuja para quien navega con teclado. */
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+/* ── Pantallas ─────────────────────────────────────────────────────────── */
+
+main {
+    position: relative;
+    height: 100%;
+}
+
+.screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    /* Contiene cualquier desbordamiento residual en vez de dejar que se pinte
+       fuera y tape a la pantalla vecina. */
+    overflow: hidden;
+    background: var(--color-bg);
+    transform: translateX(100%);
+    transition: transform var(--dur-screen) var(--ease-screen);
+    will-change: transform;
+}
+
+.screen--active {
+    transform: translateX(0);
+}
+
+/* La calculadora entra desde la izquierda: es la pantalla «anterior» a tasas. */
+.screen[data-screen='calc'] {
+    transform: translateX(-100%);
+}
+
+.screen[data-screen='calc'].screen--active {
+    transform: translateX(0);
+}
+
+.scroll {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: var(--width-content);
+    margin: 0 auto;
+    padding: 12px 16px calc(28px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── Cabecera ──────────────────────────────────────────────────────────── */
+
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 10px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg);
+}
+
+.app-title {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.header-actions {
+    display: flex;
+    gap: 6px;
+    /* Reserva el ancho del botón de la izquierda para que el título quede
+       óptimamente centrado aunque haya distinto número de acciones. */
+    min-width: var(--tap-min);
+    justify-content: flex-end;
+}
+
+.icon-btn {
+    display: grid;
+    place-items: center;
+    width: var(--tap-min);
+    height: var(--tap-min);
+    border-radius: 50%;
+    color: var(--color-accent);
+    transition: background var(--dur-tap) ease;
+}
+
+.icon-btn:hover,
+.icon-btn:active {
+    background: var(--color-surface-2);
+}
+
+.icon-btn.is-spinning svg {
+    animation: spin 900ms linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Secciones y tarjetas ──────────────────────────────────────────────── */
+
+.section {
+    margin-bottom: 22px;
+}
+
+.section:empty {
+    display: none;
+    margin: 0;
+}
+
+.section__head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0 4px 10px;
+}
+
+.section__title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-2);
+}
+
+.section__sub {
+    font-size: 0.75rem;
+    color: var(--color-text-3);
+}
+
+.card {
+    background: var(--color-surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.notice {
+    margin: 0 2px 10px;
+    padding: 9px 12px;
+    border-radius: var(--radius-field);
+    background: var(--color-surface-2);
+    color: var(--color-text-2);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+}
+
+/* ── Botones ───────────────────────────────────────────────────────────── */
+
+.btn-primary,
+.btn-secondary {
+    min-height: var(--tap-min);
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+}
+
+.btn-secondary {
+    background: var(--color-surface-2);
+    color: var(--color-text);
+}
+
+/* ── Aviso de sin conexión ─────────────────────────────────────────────── */
+
+.offline-bar {
+    display: none;
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 100;
+    padding: calc(5px + env(safe-area-inset-top, 0px)) 10px 5px;
+    background: var(--color-text-3);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+body.is-offline .offline-bar {
+    display: block;
+}
+
+/* Si la barra está visible, la cabecera baja para no quedar tapada. */
+body.is-offline .app-header {
+    padding-top: calc(32px + env(safe-area-inset-top, 0px));
+}
+
+/* ── Banner de actualización ───────────────────────────────────────────── */
+
+.update-banner {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    box-shadow: var(--shadow-float);
+    transform: translateY(110%);
+    /* `visibility` además del transform: con solo el desplazamiento, el borde
+       superior asomaba por el fondo de la pantalla y el banner seguía siendo
+       alcanzable con el tabulador. */
+    visibility: hidden;
+    transition: transform 340ms var(--ease-screen), visibility 0s linear 340ms;
+}
+
+.update-banner.is-visible {
+    transform: translateY(0);
+    visibility: visible;
+    transition: transform 340ms var(--ease-screen), visibility 0s;
+}
+
+.update-banner__text {
+    flex: 1;
+}
+
+.update-banner__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.update-banner__sub {
+    font-size: 0.8125rem;
+    color: var(--color-text-2);
+}
+
+.update-banner__actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* ── Estado vacío ──────────────────────────────────────────────────────── */
+
+.empty {
+    padding: 56px 24px;
+    text-align: center;
+}
+
+.empty__title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.empty__text {
+    color: var(--color-text-2);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+/* ── Accesibilidad ─────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

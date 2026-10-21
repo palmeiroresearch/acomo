@@ -1,0 +1,11 @@
+{
+    // El service worker corre en un contexto sin DOM, con su propia librería de
+    // tipos. `lib.webworker` y `lib.dom` declaran globales incompatibles (dos
+    // `self` distintos), así que no pueden compartir tsconfig.
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "lib": ["ES2022", "WebWorker"],
+        "types": []
+    },
+    "include": ["src/sw.ts", "src/globals.d.ts"]
+}

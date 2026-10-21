@@ -1,0 +1,139 @@
+/**
+ * Tokens de diseño.
+ *
+ * El tema tiene tres estados, no dos:
+ *
+ *   :root                                    → paleta clara (la base)
+ *   @media (prefers-color-scheme: dark)      → oscura, salvo si se eligió clara
+ *   :root[data-theme="dark"]                 → oscura forzada
+ *
+ * El guard `:not([data-theme="light"])` en el media query es lo que permite que
+ * una elección manual gane en **ambos** sentidos: sin él, elegir «claro» en un
+ * móvil configurado en oscuro no tendría efecto.
+ *
+ * Ningún color se define únicamente dentro de un bloque de tema: todos existen
+ * en `:root` y los bloques solo los redefinen.
+ */
+
+:root {
+    /* Superficies */
+    --color-bg: #f2f2f7;
+    --color-surface: #ffffff;
+    --color-surface-2: #e9e9ee;
+    --color-border: #d8d8dd;
+
+    /* Texto */
+    --color-text: #1c1c1e;
+    --color-text-2: #5c5c61;
+    --color-text-3: #8e8e93;
+
+    /* Acento y semántica */
+    --color-accent: #e07c00;
+    --color-accent-strong: #c96d00;
+    --color-on-accent: #ffffff;
+    --color-up: #1a7f45;
+    --color-down: #c3192f;
+
+    /* Estados de frescura del dato */
+    --color-fresh: #1a7f45;
+    --color-aging: #b06c00;
+    --color-stale: #c3192f;
+
+    /* Teclado de la calculadora */
+    --key-number: #e4e4ea;
+    --key-number-text: #1c1c1e;
+    --key-utility: #c9c9d0;
+    --key-utility-text: #1c1c1e;
+    --key-operator: #f59300;
+    --key-operator-text: #ffffff;
+    --key-operator-on: #ffffff;
+    --key-operator-on-text: #c96d00;
+
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 6%);
+    --shadow-float: 0 -2px 16px rgb(0 0 0 / 12%);
+
+    /* Métricas */
+    --radius-card: 14px;
+    --radius-field: 11px;
+    --gap-key: 11px;
+    --width-content: 480px;
+    --width-keypad: 400px;
+    --tap-min: 44px;
+
+    --display-xl: 5rem;
+    --display-lg: 3.9rem;
+    --display-md: 3rem;
+    --display-sm: 2.3rem;
+
+    --ease-screen: cubic-bezier(0.32, 0.72, 0, 1);
+    --dur-screen: 320ms;
+    --dur-tap: 90ms;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --color-bg: #000000;
+        --color-surface: #1c1c1e;
+        --color-surface-2: #2c2c2e;
+        --color-border: #3a3a3c;
+
+        --color-text: #ffffff;
+        --color-text-2: #aeaeb2;
+        --color-text-3: #8e8e93;
+
+        --color-accent: #ff9f0a;
+        --color-accent-strong: #ffb340;
+        --color-on-accent: #1c1c1e;
+        --color-up: #30d158;
+        --color-down: #ff453a;
+
+        --color-fresh: #30d158;
+        --color-aging: #ffd60a;
+        --color-stale: #ff453a;
+
+        --key-number: #333333;
+        --key-number-text: #ffffff;
+        --key-utility: #a5a5a5;
+        --key-utility-text: #000000;
+        --key-operator: #ff9f0a;
+        --key-operator-text: #ffffff;
+        --key-operator-on: #ffffff;
+        --key-operator-on-text: #ff9f0a;
+
+        --shadow-card: none;
+        --shadow-float: 0 -2px 16px rgb(0 0 0 / 60%);
+    }
+}
+
+:root[data-theme="dark"] {
+    --color-bg: #000000;
+    --color-surface: #1c1c1e;
+    --color-surface-2: #2c2c2e;
+    --color-border: #3a3a3c;
+
+    --color-text: #ffffff;
+    --color-text-2: #aeaeb2;
+    --color-text-3: #8e8e93;
+
+    --color-accent: #ff9f0a;
+    --color-accent-strong: #ffb340;
+    --color-on-accent: #1c1c1e;
+    --color-up: #30d158;
+    --color-down: #ff453a;
+
+    --color-fresh: #30d158;
+    --color-aging: #ffd60a;
+    --color-stale: #ff453a;
+
+    --key-number: #333333;
+    --key-number-text: #ffffff;
+    --key-utility: #a5a5a5;
+    --key-utility-text: #000000;
+    --key-operator: #ff9f0a;
+    --key-operator-text: #ffffff;
+    --key-operator-on: #ffffff;
+    --key-operator-on-text: #ff9f0a;
+
+    --shadow-card: none;
+    --shadow-float: 0 -2px 16px rgb(0 0 0 / 60%);
+}

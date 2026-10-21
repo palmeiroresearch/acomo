@@ -1,0 +1,35 @@
+{
+    "name": "A Cómo — tasas de cambio de Cuba",
+    "short_name": "A Cómo",
+    "description": "Tasas del mercado informal y del Segmento III del Banco Central de Cuba, más calculadora. Funciona sin conexión.",
+    "id": "/",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#f2f2f7",
+    "theme_color": "#f2f2f7",
+    "lang": "es",
+    "dir": "ltr",
+    "categories": ["finance", "utilities"],
+    "icons": [
+        {
+            "src": "/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
