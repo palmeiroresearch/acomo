@@ -33,6 +33,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Sin `ref` explícito, checkout clava el SHA que originó la corrida.
+          # Cuando lo invoca rates.yml, ese SHA es ANTERIOR al commit que el bot
+          # acaba de hacer en el job previo, así que se desplegaría la tasa
+          # vieja y el sitio iría permanentemente un ciclo por detrás. Pedir la
+          # rama toma su punta actual, que ya incluye ese commit.
+          ref: ${{ github.ref }}
+
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
