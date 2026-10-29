@@ -1,24 +1,24 @@
 {
   "schema": 2,
-  "generated_at": "2026-10-29T03:35:03Z",
+  "generated_at": "2026-10-29T10:34:19Z",
   "informal": {
     "source": "cubadivisas",
     "label": "cubadivisas.com",
     "source_url": "https://cubadivisas.com/",
-    "updated_at": "2026-10-29T03:35:03Z",
+    "updated_at": "2026-10-29T10:34:19Z",
     "attempted": [
       "cubadivisas:ok"
     ],
     "rates": {
       "CAD": {
-        "cup": 546.04,
-        "change": 4.67,
-        "change_pct": 0.86
+        "cup": 545.59,
+        "change": 4.81,
+        "change_pct": 0.89
       },
       "CLA": {
-        "cup": 774.11,
-        "change": 3.7,
-        "change_pct": 0.48
+        "cup": 775.37,
+        "change": 3.52,
+        "change_pct": 0.46
       },
       "EUR": {
         "cup": 950.0,
@@ -26,9 +26,9 @@
         "change_pct": 1.06
       },
       "MLC": {
-        "cup": 727.04,
-        "change": 12.97,
-        "change_pct": 1.82
+        "cup": 732.2,
+        "change": 17.8,
+        "change_pct": 2.49
       },
       "USD": {
         "cup": 855.0,
@@ -36,9 +36,9 @@
         "change_pct": 0.59
       },
       "ZELLE": {
-        "cup": 826.57,
-        "change": 2.88,
-        "change_pct": 0.35
+        "cup": 830.63,
+        "change": 3.25,
+        "change_pct": 0.39
       }
     }
   },
@@ -47,31 +47,31 @@
     "source_url": "https://www.bc.gob.cu/tasas-de-cambio",
     "label": "Banco Central de Cuba",
     "segment": "III",
-    "updated_at": "2026-10-28T00:00:00.000Z",
+    "updated_at": "2026-10-29T00:00:00.000Z",
     "rates": {
       "CAD": {
-        "cup": 537.15
+        "cup": 539.41
       },
       "CHF": {
-        "cup": 909.64
+        "cup": 913.14
       },
       "CNY": {
-        "cup": 113.1
+        "cup": 113.71
       },
       "EUR": {
-        "cup": 840.3
+        "cup": 844.18
       },
       "GBP": {
-        "cup": 1004.97
+        "cup": 1007.95
       },
       "MXN": {
-        "cup": 40.45
+        "cup": 40.66
       },
       "RUB": {
-        "cup": 9.35
+        "cup": 9.46
       },
       "USD": {
-        "cup": 754.0
+        "cup": 758.0
       }
     }
   }
