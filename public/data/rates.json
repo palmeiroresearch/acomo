@@ -1,24 +1,24 @@
 {
   "schema": 2,
-  "generated_at": "2026-11-10T03:40:23Z",
+  "generated_at": "2026-11-10T11:56:45Z",
   "informal": {
     "source": "cubadivisas",
     "label": "cubadivisas.com",
     "source_url": "https://cubadivisas.com/",
-    "updated_at": "2026-11-10T03:40:22Z",
+    "updated_at": "2026-11-10T11:56:45Z",
     "attempted": [
       "cubadivisas:ok"
     ],
     "rates": {
       "CAD": {
-        "cup": 599.91,
-        "change": 0.03,
+        "cup": 599.9,
+        "change": 0.04,
         "change_pct": 0.01
       },
       "CLA": {
-        "cup": 830.98,
-        "change": 4.88,
-        "change_pct": 0.59
+        "cup": 832.95,
+        "change": 1.85,
+        "change_pct": 0.22
       },
       "EUR": {
         "cup": 1010.0,
@@ -36,9 +36,9 @@
         "change_pct": -1.08
       },
       "ZELLE": {
-        "cup": 906.16,
-        "change": 10.51,
-        "change_pct": 1.17
+        "cup": 906.37,
+        "change": 10.55,
+        "change_pct": 1.18
       }
     }
   },
@@ -47,31 +47,31 @@
     "source_url": "https://www.bc.gob.cu/tasas-de-cambio",
     "label": "Banco Central de Cuba",
     "segment": "III",
-    "updated_at": "2026-11-09T00:00:00.000Z",
+    "updated_at": "2026-11-10T00:00:00.000Z",
     "rates": {
       "CAD": {
-        "cup": 567.09
+        "cup": 571.23
       },
       "CHF": {
-        "cup": 975.55
+        "cup": 981.93
       },
       "CNY": {
-        "cup": 119.82
+        "cup": 120.94
       },
       "EUR": {
-        "cup": 892.04
+        "cup": 903.68
       },
       "GBP": {
-        "cup": 1069.12
+        "cup": 1081.99
       },
       "MXN": {
-        "cup": 42.95
+        "cup": 43.44
       },
       "RUB": {
-        "cup": 9.76
+        "cup": 9.71
       },
       "USD": {
-        "cup": 800.0
+        "cup": 807.0
       }
     }
   }
