@@ -1,24 +1,24 @@
 {
   "schema": 2,
-  "generated_at": "2026-11-14T14:22:33Z",
+  "generated_at": "2026-11-14T19:19:31Z",
   "informal": {
     "source": "cubadivisas",
     "label": "cubadivisas.com",
     "source_url": "https://cubadivisas.com/",
-    "updated_at": "2026-11-14T14:22:33Z",
+    "updated_at": "2026-11-14T19:19:30Z",
     "attempted": [
       "cubadivisas:ok"
     ],
     "rates": {
       "CAD": {
-        "cup": 584.44,
-        "change": 5.18,
-        "change_pct": 0.89
+        "cup": 579.67,
+        "change": 0.11,
+        "change_pct": 0.02
       },
       "CLA": {
-        "cup": 846.6,
-        "change": 1.4,
-        "change_pct": 0.17
+        "cup": 850.03,
+        "change": 0.19,
+        "change_pct": 0.02
       },
       "EUR": {
         "cup": 1000.0,
@@ -26,19 +26,19 @@
         "change_pct": null
       },
       "MLC": {
-        "cup": 783.76,
-        "change": -13.77,
-        "change_pct": -1.73
+        "cup": 804.08,
+        "change": 35.93,
+        "change_pct": 4.68
       },
       "USD": {
-        "cup": 910.0,
-        "change": 0.0,
-        "change_pct": null
+        "cup": 915.0,
+        "change": 5.0,
+        "change_pct": 0.55
       },
       "ZELLE": {
-        "cup": 909.82,
-        "change": 0.39,
-        "change_pct": 0.04
+        "cup": 907.51,
+        "change": -0.4,
+        "change_pct": -0.04
       }
     }
   },
