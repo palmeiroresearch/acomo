@@ -1,33 +1,33 @@
 {
   "schema": 2,
-  "generated_at": "2026-11-19T00:36:43Z",
+  "generated_at": "2026-11-19T08:10:13Z",
   "informal": {
     "source": "cubadivisas",
     "label": "cubadivisas.com",
     "source_url": "https://cubadivisas.com/",
-    "updated_at": "2026-11-19T00:36:43Z",
+    "updated_at": "2026-11-19T08:10:13Z",
     "attempted": [
       "cubadivisas:ok"
     ],
     "rates": {
       "CAD": {
-        "cup": 586.22,
-        "change": -1.24,
-        "change_pct": -0.21
+        "cup": 586.48,
+        "change": -2.15,
+        "change_pct": -0.37
       },
       "CLA": {
-        "cup": 852.81,
-        "change": -0.71,
-        "change_pct": -0.08
+        "cup": 851.19,
+        "change": 1.09,
+        "change_pct": 0.13
       },
       "EUR": {
-        "cup": 1005.0,
-        "change": 5.0,
-        "change_pct": 0.5
+        "cup": 1007.5,
+        "change": 7.5,
+        "change_pct": 0.75
       },
       "MLC": {
         "cup": 847.68,
-        "change": 2.32,
+        "change": 2.31,
         "change_pct": 0.27
       },
       "USD": {
@@ -36,7 +36,7 @@
         "change_pct": 0.54
       },
       "ZELLE": {
-        "cup": 918.44,
+        "cup": 917.86,
         "change": 1.82,
         "change_pct": 0.2
       }
@@ -47,31 +47,31 @@
     "source_url": "https://www.bc.gob.cu/tasas-de-cambio",
     "label": "Banco Central de Cuba",
     "segment": "III",
-    "updated_at": "2026-11-18T00:00:00.000Z",
+    "updated_at": "2026-11-19T00:00:00.000Z",
     "rates": {
       "CAD": {
-        "cup": 584.72
+        "cup": 586.18
       },
       "CHF": {
-        "cup": 994.47
+        "cup": 995.61
       },
       "CNY": {
-        "cup": 125.41
+        "cup": 125.83
       },
       "EUR": {
-        "cup": 918.6
+        "cup": 920.22
       },
       "GBP": {
-        "cup": 1103.1
+        "cup": 1104.54
       },
       "MXN": {
-        "cup": 45.18
+        "cup": 45.2
       },
       "RUB": {
         "cup": 10.19
       },
       "USD": {
-        "cup": 836.0
+        "cup": 839.0
       }
     }
   }
