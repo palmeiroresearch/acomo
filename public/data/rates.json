@@ -1,11 +1,11 @@
 {
   "schema": 2,
-  "generated_at": "2026-11-19T08:10:13Z",
+  "generated_at": "2026-11-19T17:29:17Z",
   "informal": {
     "source": "cubadivisas",
     "label": "cubadivisas.com",
     "source_url": "https://cubadivisas.com/",
-    "updated_at": "2026-11-19T08:10:13Z",
+    "updated_at": "2026-11-19T17:29:17Z",
     "attempted": [
       "cubadivisas:ok"
     ],
