@@ -1,23 +1,23 @@
 {
   "schema": 2,
-  "generated_at": "2026-11-22T02:44:49Z",
+  "generated_at": "2026-11-22T10:30:14Z",
   "informal": {
     "source": "cubadivisas",
     "label": "cubadivisas.com",
     "source_url": "https://cubadivisas.com/",
-    "updated_at": "2026-11-22T02:44:48Z",
+    "updated_at": "2026-11-22T10:30:14Z",
     "attempted": [
       "cubadivisas:ok"
     ],
     "rates": {
       "CAD": {
-        "cup": 594.27,
-        "change": 1.89,
-        "change_pct": 0.32
+        "cup": 594.56,
+        "change": 1.8,
+        "change_pct": 0.3
       },
       "CLA": {
-        "cup": 865.67,
-        "change": 5.01,
+        "cup": 866.73,
+        "change": 5.04,
         "change_pct": 0.58
       },
       "EUR": {
@@ -26,9 +26,9 @@
         "change_pct": null
       },
       "MLC": {
-        "cup": 839.71,
-        "change": -9.71,
-        "change_pct": -1.14
+        "cup": 843.36,
+        "change": -3.36,
+        "change_pct": -0.4
       },
       "USD": {
         "cup": 960.0,
@@ -36,9 +36,9 @@
         "change_pct": 1.05
       },
       "ZELLE": {
-        "cup": 924.05,
-        "change": 4.82,
-        "change_pct": 0.52
+        "cup": 921.49,
+        "change": 4.4,
+        "change_pct": 0.48
       }
     }
   },
@@ -47,7 +47,7 @@
     "source_url": "https://www.bc.gob.cu/tasas-de-cambio",
     "label": "Banco Central de Cuba",
     "segment": "III",
-    "updated_at": "2026-11-21T00:00:00.000Z",
+    "updated_at": "2026-11-22T00:00:00.000Z",
     "rates": {
       "CAD": {
         "cup": 592.68
