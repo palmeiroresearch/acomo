@@ -1,23 +1,23 @@
 {
   "schema": 2,
-  "generated_at": "2026-11-24T23:09:21Z",
+  "generated_at": "2026-11-25T05:32:32Z",
   "informal": {
     "source": "cubadivisas",
     "label": "cubadivisas.com",
     "source_url": "https://cubadivisas.com/",
-    "updated_at": "2026-11-24T23:09:21Z",
+    "updated_at": "2026-11-25T05:32:32Z",
     "attempted": [
       "cubadivisas:ok"
     ],
     "rates": {
       "CAD": {
-        "cup": 607.1,
-        "change": 4.29,
-        "change_pct": 0.71
+        "cup": 607.38,
+        "change": 4.2,
+        "change_pct": 0.7
       },
       "CLA": {
-        "cup": 876.67,
-        "change": 2.67,
+        "cup": 877.24,
+        "change": 2.71,
         "change_pct": 0.31
       },
       "EUR": {
@@ -26,9 +26,9 @@
         "change_pct": 0.49
       },
       "MLC": {
-        "cup": 814.9,
-        "change": -4.89,
-        "change_pct": -0.6
+        "cup": 810.43,
+        "change": -10.43,
+        "change_pct": -1.27
       },
       "USD": {
         "cup": 970.0,
@@ -36,8 +36,8 @@
         "change_pct": null
       },
       "ZELLE": {
-        "cup": 934.66,
-        "change": 5.17,
+        "cup": 935.2,
+        "change": 5.22,
         "change_pct": 0.56
       }
     }
@@ -47,31 +47,31 @@
     "source_url": "https://www.bc.gob.cu/tasas-de-cambio",
     "label": "Banco Central de Cuba",
     "segment": "III",
-    "updated_at": "2026-11-24T00:00:00.000Z",
+    "updated_at": "2026-11-25T00:00:00.000Z",
     "rates": {
       "CAD": {
-        "cup": 593.94
+        "cup": 602.01
       },
       "CHF": {
-        "cup": 1013.05
+        "cup": 1029.53
       },
       "CNY": {
-        "cup": 128.14
+        "cup": 129.19
       },
       "EUR": {
-        "cup": 929.84
+        "cup": 944.17
       },
       "GBP": {
-        "cup": 1111.74
+        "cup": 1128.51
       },
       "MXN": {
-        "cup": 44.54
+        "cup": 44.62
       },
       "RUB": {
-        "cup": 10.43
+        "cup": 10.49
       },
       "USD": {
-        "cup": 854.0
+        "cup": 861.0
       }
     }
   }
